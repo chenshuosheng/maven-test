@@ -284,46 +284,60 @@ public class MvnTest {
   - properties：定义属性值
 
     - 自定义版本号，进行统一管理（对于同一个框架的一组 jar 包最好使用相同的版本，为了方便升级框架，可以将 jar 包的版本信息统一提取出来，统一声明版本号），在需要引用的地方使用“${标签}”
-    - project.build.sourceEncoding：工程构建过程中读取源码时使用的字符集
-
-  - dependencyManagement：
-
-    - dependencies：依赖配置
-
-      - dependency：配置一个具体的依赖
-
-        - 依赖作标信息(groupId、artifactId、version)
-
-        - scope：依赖的使用范围
-
-          - **complie(**默认值)：编译范围，用在编译、测试、运行，因运行时需要包含该依赖，故该依赖会被打包
-
-          - **test**：仅用在测试，编译、运行时不需要（如：Junit）,因运行时不需要包含该依赖，故该依赖不会被打包
-
-          - **runtime**：用在测试、运行，编译时不需要（如：jdbc的驱动包），因运行时需要包含该依赖，故该依赖会被打包
-
-          - provided：只有当jdk或一个容器已提供该依赖，才会使用相应的依赖，用在编译、测试，运行时不需要（如：servlet api由Tomcat容器提供）
-
-          - system：与 provide 类似，但是必须显示的提供一个对于本地系统中 jar 文件的路径。一般不推荐使用。
-
-          
-
-        - <img src="https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240122153442601.png" alt="image-20240122153442601" style="zoom:80%;" />
-
+  
+  - project.build.sourceEncoding：工程构建过程中读取源码时使用的字符集
+  
+    
+  
+- dependencyManagement：
+  
+  - dependencies：依赖配置
+  
+    - dependency：配置一个具体的依赖
+  
+      - 依赖作标信息(groupId、artifactId、version)
+  
+      - scope：依赖的使用范围
+  
+        - **complie(**默认值)：编译范围，用在编译、测试、运行，因运行时需要包含该依赖，故该依赖会被打包
+  
+        - **test**：仅用在测试，编译、运行时不需要（如：Junit）,因运行时不需要包含该依赖，故该依赖不会被打包
+  
+        - **runtime**：用在测试、运行，编译时不需要（如：jdbc的驱动包），因运行时需要包含该依赖，故该依赖会被打包
+  
+        - provided：只有当jdk或一个容器已提供该依赖，才会使用相应的依赖，用在编译、测试，运行时不需要（如：servlet api由Tomcat容器提供）
+  
+        - system：与 provide 类似，但是必须显示的提供一个对于本地系统中 jar 文件的路径。一般不推荐使用。
+  
         
-
-        - exclusions：配置依赖排除
-
-          - exclusion：一个具体的排除项
-
-            - groupId
-
+  
+      - <img src="https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240122153442601.png" alt="image-20240122153442601" style="zoom:80%;" />
+  
+      
+  
+      - exclusions：配置依赖排除
+  
+        - exclusion：一个具体的排除项
+  
+          - groupId
+  
             - artifactId
-
+  
             - 不需要写版本号
+            
+              
 
-- 依赖的传递特性
+#### 4. 依赖的传递特性
 
+##### 4.1. 传递的原则
+
+- 当A依赖于B，而B依赖于C的前提下，C是否能传递到A，取决于B依赖C时使用的依赖范围以及配置
+  - B依赖C时使用compile范围，可以传递
+  - B依赖C时使用test或provide范围，不能传递，故需要相应的jar包时，就必须在需要的地方明确配置依赖才可
+  - B依赖C时，若配置标签<optional>true</optional>，则不能传递
+  
+  
+  
   - 模块B包含druid依赖
 
   - ```java
@@ -390,11 +404,194 @@ public class MvnTest {
     </project>
     ```
 
-  - 因此在模块A中可以使用druid的相关类(A中自动会引入B中包含的依赖)
+  - 因此在模块A中可以使用druid的相关类(A中自动会引入B中包含的依赖(compile的，且未设置optional为true))
 
   - ![image-20240221215513938](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240221215513938.png)
 
-- ##### 继承
+
+
+##### 4.2. 依赖传递终止
+  - 非compile范围进行依赖传递
+
+  - 使用optional配置终止传递
+
+  - 依赖冲突(传递的依赖已存在)
+
+    
+
+##### 4.3. 解决依赖冲突(如何选择重复依赖)的方式
+###### 4.3.1. 自动选择
+
+-  短路优先原则(第一原则)
+
+  A—>B—>C—>D—>E—>X(version 0.0.1)      
+  A—>F—>X(version 0.0.2)     
+  则A依赖于X(version 0.0.2)     
+  ![image-20240222190914475](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240222190914475.png)
+
+
+-  依赖路径长度相同情况下，则“先声明优先”(第二原则)
+   
+  A—>E—>X(version 0.0.1)
+  A—>F—>X(version 0.0.2)
+  则A依赖于X(version 0.0.1)
+  ![image-20240222185200302](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240222185200302.png)
+
+###### 4.3.2.手动排除
+
+- ![image-20240222192233042](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240222192233042.png)
+
+  - maven_A -- pom.xml
+    
+      - ```java
+          <?xml version="1.0" encoding="UTF-8"?>
+          <project xmlns="http://maven.apache.org/POM/4.0.0"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+              <modelVersion>4.0.0</modelVersion>
+          
+              <groupId>org.example</groupId>
+              <artifactId>maven_A</artifactId>
+              <version>1.0-SNAPSHOT</version>
+          
+              <properties>
+                  <maven.compiler.source>8</maven.compiler.source>
+                  <maven.compiler.target>8</maven.compiler.target>
+              </properties>
+          
+              <dependencies>
+                  <dependency>
+                      <groupId>org.example</groupId>
+                      <artifactId>maven_B</artifactId>
+                      <version>1.0-SNAPSHOT</version>
+                      <!--依赖排除，不指定的话，根据依赖传递第二原则，将会引入maven_B下对应的版本-->
+                      <exclusions>
+                          <exclusion>
+                              <groupId>io.swagger.core.v3</groupId>
+                              <artifactId>swagger-annotations</artifactId>
+                          </exclusion>
+                      </exclusions>
+                  </dependency>
+                  <dependency>
+                      <groupId>org.example</groupId>
+                      <artifactId>maven_C</artifactId>
+                      <version>1.0-SNAPSHOT</version>
+                  </dependency>
+          
+                  <!--用于验证依赖传递的第一原则，依赖路径最短-->
+                  <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+                  <dependency>
+                      <groupId>org.apache.logging.log4j</groupId>
+                      <artifactId>log4j-core</artifactId>
+                      <version>2.17.1</version>
+                  </dependency>
+          
+                  <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+                  <dependency>
+                      <groupId>org.junit.jupiter</groupId>
+                      <artifactId>junit-jupiter-api</artifactId>
+                      <version>5.8.2</version>
+                      <scope>test</scope>
+                  </dependency>
+              </dependencies>
+          </project>
+          ```
+      
+  - maven_B -- pom.xml
+    
+      - ```java
+            <?xml version="1.0" encoding="UTF-8"?>
+            <project xmlns="http://maven.apache.org/POM/4.0.0"
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+                <modelVersion>4.0.0</modelVersion>
+            
+                <groupId>org.example</groupId>
+                <artifactId>maven_B</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            
+                <properties>
+                    <maven.compiler.source>8</maven.compiler.source>
+                    <maven.compiler.target>8</maven.compiler.target>
+                </properties>
+            
+                <dependencies>
+                    <!--用于验证依赖传递的第一原则，依赖路径最短-->
+                    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+                    <dependency>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-core</artifactId>
+                        <version>2.19.0</version>
+                    </dependency>
+            
+                    <!--用于验证依赖传递的第二原则，路径长度相同，先声明优先-->
+                    <!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
+                    <dependency>
+                        <groupId>com.alibaba</groupId>
+                        <artifactId>druid</artifactId>
+                        <version>1.2.8</version>
+                        <!--添加下列配置，依赖传递将被终止-->
+                        <!--<optional>true</optional>-->
+                    </dependency>
+                    <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api &ndash;&gt;
+                    <dependency>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-api</artifactId>
+                        <version>5.8.2</version>
+                        &lt;!&ndash;<scope>test</scope>&ndash;&gt;
+                    </dependency>-->
+            
+            
+                    <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations -->
+                    <dependency>
+                        <groupId>io.swagger.core.v3</groupId>
+                        <artifactId>swagger-annotations</artifactId>
+                        <version>2.2.15</version>
+                    </dependency>
+                </dependencies>
+            </project>
+        ```
+      
+  -  maven_C -- pom.xml
+     
+      - ```java
+          <?xml version="1.0" encoding="UTF-8"?>
+          <project xmlns="http://maven.apache.org/POM/4.0.0"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+              <modelVersion>4.0.0</modelVersion>
+          
+              <groupId>org.example</groupId>
+              <artifactId>maven_C</artifactId>
+              <version>1.0-SNAPSHOT</version>
+          
+              <properties>
+                  <maven.compiler.source>8</maven.compiler.source>
+                  <maven.compiler.target>8</maven.compiler.target>
+              </properties>
+          
+              <dependencies>
+                  <!--用于验证依赖传递的第二原则，路径长度相同，先声明优先-->
+                  <!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
+                  <dependency>
+                      <groupId>com.alibaba</groupId>
+                      <artifactId>druid</artifactId>
+                      <version>1.2.7</version>
+                  </dependency>
+          
+                  <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations -->
+                  <dependency>
+                      <groupId>io.swagger.core.v3</groupId>
+                      <artifactId>swagger-annotations</artifactId>
+                      <version>2.2.3</version>
+                  </dependency>
+              </dependencies>
+          </project>
+          ```
+      
+      
+
+### 五. Maven工程继承和聚合关系
 
   - 概念：Maven工程A继承自工程B，A是子工程、B是父工程
   - 作用：在父工程中统一管理项目中的依赖信息(主要指的是依赖版本信息)，实际上被管理的依赖并没有真正被引入到工程中，只有当子工程中引用时才会引入依赖到子工程中
