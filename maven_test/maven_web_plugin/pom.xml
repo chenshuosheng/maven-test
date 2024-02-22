@@ -1,13 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">  
-  <modelVersion>4.0.0</modelVersion>  
-  <groupId>org.example</groupId>  
-  <artifactId>maven_web_plugin</artifactId>  
-  <version>1.0-SNAPSHOT</version>  
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.example</groupId>
+  <artifactId>maven_web_plugin</artifactId>
+  <version>1.0-SNAPSHOT</version>
   <packaging>war</packaging>
-  <properties> 
-    <maven.compiler.source>8</maven.compiler.source>  
-    <maven.compiler.target>8</maven.compiler.target> 
-  </properties> 
+  <properties>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
+  </properties>
+
+  <build>
+    <!--自定义打包名称-->
+    <finalName>maven_web-1.0</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+          <!--tomcat服务端口号，启动Tomcat服务器时，它将监听8090端口上的请求-->
+          <port>8090</port>
+          <!--表示应用程序将会被部署在Tomcat服务器的根路径下-->
+          <path>/</path>
+          <!--指定URI的编码方式。在这里，编码方式被设置为UTF-8，这意味着URI中的字符将会以UTF-8编码进行解析-->
+          <uriEncoding>UTF-8</uriEncoding>
+          <!--服务器名称-->
+          <server>tomcat7</server>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
