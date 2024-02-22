@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>maven_B</artifactId>
+    <artifactId>maven_C</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -14,37 +14,19 @@
     </properties>
 
     <dependencies>
-        <!--用于验证依赖传递的第一原则，依赖路径最短-->
-        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.19.0</version>
-        </dependency>
-
         <!--用于验证依赖传递的第二原则，路径长度相同，先声明优先-->
         <!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
-            <version>1.2.8</version>
-            <!--添加下列配置，依赖传递将被终止-->
-            <!--<optional>true</optional>-->
+            <version>1.2.7</version>
         </dependency>
-        <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api &ndash;&gt;
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.8.2</version>
-            &lt;!&ndash;<scope>test</scope>&ndash;&gt;
-        </dependency>-->
-
 
         <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations -->
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
-            <version>2.2.15</version>
+            <version>2.2.3</version>
         </dependency>
     </dependencies>
 </project>
