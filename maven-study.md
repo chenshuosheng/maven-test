@@ -289,7 +289,7 @@ public class MvnTest {
   
     
   
-- dependencyManagement：
+- dependencyManagement：(依赖管理，**若不使用此标签，则父工程中所有依赖都会被子工程无条件继承，若使用了该标签，则在子工程中需要用到父工程中依赖时，只需要在子工程的**dependencies中添加相应的依赖信息即可（不需要指定版本信息）)
   
   - dependencies：依赖配置
   
@@ -593,12 +593,183 @@ public class MvnTest {
 
 ### 五. Maven工程继承和聚合关系
 
-  - 概念：Maven工程A继承自工程B，A是子工程、B是父工程
+  - 概念：Maven继承是指在Maven项目中，让一个项目从另一个项目中继承配置信息的机制，继承可以让我们在多个项目中共享同一配置信息，简化项目的管理和维护工作 。 Maven工程A继承自工程B，A是子工程、B是父工程
+
   - 作用：在父工程中统一管理项目中的依赖信息(主要指的是依赖版本信息)，实际上被管理的依赖并没有真正被引入到工程中，只有当子工程中引用时才会引入依赖到子工程中
 
+    
+
+#### 1. 父工程中不使用dependencyManagement标签进行依赖管理时
+
+![image-20240222221128935](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240222221128935.png)
+
+maven_parent的pom.xml
+
+```java
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>css.example</groupId>
+    <artifactId>maven_parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>maven_son</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+             
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.2.8</version>
+            <!--添加下列配置，依赖传递将被终止，子模块都会继承-->
+            <optional>true</optional>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.24</version>
+            <!--子模块都会继承-->
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>
+```
 
 
 
+![image-20240222220955400](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240222220955400.png)
+
+maven_son的pom.xml
+
+```java
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!--设置父工程的坐标-->
+    <parent>
+        <artifactId>maven_parent</artifactId>
+        <groupId>css.example</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--由于子工程的groupId和version必须和父工程保持一致，故无需再写一遍-->
+    <artifactId>maven_son</artifactId>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+</project>
+```
 
 
+
+![image-20240222222035286](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240222222035286.png)
+
+
+
+#### 2. 父工程中使用dependencyManagement标签进行依赖管理时
+
+maven_parent的pom.xml
+
+```java
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>css.example</groupId>
+    <artifactId>maven_parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>maven_son</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+    <!--依赖管理，
+    若不使用此标签，则父工程中所有依赖都会被子工程无条件继承，
+    若使用了该标签，则在子工程中需要用到父工程中依赖时，
+    只需要在子工程的dependencies中添加相应的依赖信息即可（不需要指定版本信息）)
+    -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>1.2.8</version>
+                <!--添加下列配置，依赖传递将被终止，子模块都会继承-->
+                <optional>true</optional>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.24</version>
+                <!--子模块都会继承-->
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>
+```
+
+
+
+maven_son的pom.xml
+
+```java
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!--设置父工程的坐标-->
+    <parent>
+        <artifactId>maven_parent</artifactId>
+        <groupId>css.example</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--由于子工程的groupId和version必须和父工程保持一致，故无需再写一遍-->
+    <artifactId>maven_son</artifactId>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
+</project>
+```
+
+![image-20240222223618765](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240222223618765.png)
 
