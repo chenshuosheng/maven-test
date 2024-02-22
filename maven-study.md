@@ -152,6 +152,22 @@ public class MvnTest {
 
 
 
+**打包时，默认打包src/main/java下的 .java 文件到target/classes下对应目录下，不会打包其它类型的资源，如xml文件，只有放在resource下才会被正常打包。为了解决该问题，可以通过指定打包文件类型进行处理**
+
+![image-20240221210748112](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240221210748112.png)
+
+
+
+![image-20240221210923915](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240221210923915.png)
+
+
+
+![image-20240221211932956](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240221211932956.png)
+
+
+
+
+
 #### 3. pom.xml文件
 
 - ##### POM(Project Object Model)：项目对象模型
@@ -167,6 +183,103 @@ public class MvnTest {
     - jar：表示该工程是一个Java工程
     - war：表示该工程是一个Web工程
     - pom：表示该工程是一个“管理其它工程”的工程
+
+  - build: 
+
+    - **默认情况下，构建不需要额外配置，都有对应的缺省配置。当然也可以通过pom.xml文件定制一些配置，来修改默认构建的行为和产物**
+
+      - 指定构建打包文件的名称，不使用默认名称（artifactId+version）
+      - 制定构建打包时，指定包含文件格式和排除文件
+      - 打包插件版本过低时，配置更高版本插件
+
+    - finalName：自定义打包名称
+
+    - plugins：插件
+
+      - ```java
+        <build>
+          <!--自定义打包名称-->
+          <finalName>maven_web-1.0</finalName>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.tomcat.maven</groupId>
+              <artifactId>tomcat7-maven-plugin</artifactId>
+              <version>2.2</version>
+              <configuration>
+                <!--tomcat服务端口号，启动Tomcat服务器时，它将监听8090端口上的请求-->
+                <port>8090</port>
+                <!--表示应用程序将会被部署在Tomcat服务器的根路径下-->
+                <path>/</path>
+                <!--指定URI的编码方式。在这里，编码方式被设置为UTF-8，这意味着URI中的字符将会以UTF-8编码进行解析-->
+                <uriEncoding>UTF-8</uriEncoding>
+                <!--服务器名称-->
+                <server>tomcat7</server>
+              </configuration>
+            </plugin>
+          </plugins>
+        </build>
+        ```
+
+      - ![image-20240221213510037](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240221213510037.png)
+
+      - ```xml
+        "C:\Program Files\Java\jdk1.8.0_111\bin\java.exe" -Dmaven.multiModuleProjectDirectory=F:\programByCSS\maven\maven_test\maven_web_plugin -Dmaven.home=E:\Maven\apache-maven-3.6.1 -Dclassworlds.conf=E:\Maven\apache-maven-3.6.1\bin\m2.conf "-Dmaven.ext.class.path=E:\Java\IDEA\IntelliJ IDEA 2021.3\plugins\maven\lib\maven-event-listener.jar" "-javaagent:E:\Java\IDEA\IntelliJ IDEA 2021.3\lib\idea_rt.jar=65121:E:\Java\IDEA\IntelliJ IDEA 2021.3\bin" -Dfile.encoding=UTF-8 -classpath E:\Maven\apache-maven-3.6.1\boot\plexus-classworlds-2.6.0.jar org.codehaus.classworlds.Launcher -Didea.version=2021.3 -s E:\Maven\apache-maven-3.6.1\conf\settings.xml org.apache.tomcat.maven:tomcat7-maven-plugin:2.2:run
+        [INFO] Scanning for projects...
+        [INFO] 
+        [INFO] --------------------< org.example:maven_web_plugin >--------------------
+        [INFO] Building maven_web_plugin 1.0-SNAPSHOT
+        [INFO] --------------------------------[ war ]---------------------------------
+        [INFO] 
+        [INFO] >>> tomcat7-maven-plugin:2.2:run (default-cli) > process-classes @ maven_web_plugin >>>
+        [INFO] 
+        [INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ maven_web_plugin ---
+        [WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+        [INFO] Copying 0 resource
+        [INFO] 
+        [INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ maven_web_plugin ---
+        [INFO] Nothing to compile - all classes are up to date
+        [INFO] 
+        [INFO] <<< tomcat7-maven-plugin:2.2:run (default-cli) < process-classes @ maven_web_plugin <<<
+        [INFO] 
+        [INFO] 
+        [INFO] --- tomcat7-maven-plugin:2.2:run (default-cli) @ maven_web_plugin ---
+        [INFO] Running war on http://localhost:8090/
+        [INFO] Creating Tomcat server configuration at F:\programByCSS\maven\maven_test\maven_web_plugin\target\tomcat
+        [INFO] create webapp with contextPath: 
+        二月 21, 2024 9:35:51 下午 org.apache.coyote.AbstractProtocol init
+        信息: Initializing ProtocolHandler ["http-bio-8090"]
+        二月 21, 2024 9:35:51 下午 org.apache.catalina.core.StandardService startInternal
+        信息: Starting service Tomcat
+        二月 21, 2024 9:35:51 下午 org.apache.catalina.core.StandardEngine startInternal
+        信息: Starting Servlet Engine: Apache Tomcat/7.0.47
+        二月 21, 2024 9:35:52 下午 org.apache.coyote.AbstractProtocol start
+        信息: Starting ProtocolHandler ["http-bio-8090"]
+        ```
+
+        
+
+    - resources：
+
+      - resource
+
+        - directory：设置资源所在上级目录，如：src/main/java
+        - includes：
+          - include：设置包含的文件类型，如：** /  *.xml，表示包含任意子目录下所有xml类型的文件
+
+      - ```java
+            <build>
+                <resources>
+                    <resource>
+                        <!--设置资源所在目录-->
+                        <directory>src/main/java</directory>
+                        <includes>
+                            <!--设置包含的资源类型-->
+                            <include>**/*.xml</include>
+                        </includes>
+                    </resource>
+                </resources>
+            </build>
+        ```
 
   - properties：定义属性值
 
@@ -209,7 +322,77 @@ public class MvnTest {
 
             - 不需要写版本号
 
-            
+- 依赖的传递特性
+
+  - 模块B包含druid依赖
+
+  - ```java
+    <?xml version="1.0" encoding="UTF-8"?>
+    <project xmlns="http://maven.apache.org/POM/4.0.0"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        <modelVersion>4.0.0</modelVersion>
+    
+        <groupId>org.example</groupId>
+        <artifactId>maven_B</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    
+        <properties>
+            <maven.compiler.source>8</maven.compiler.source>
+            <maven.compiler.target>8</maven.compiler.target>
+        </properties>
+    
+        <dependencies>
+            <!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>1.2.8</version>
+            </dependency>
+        </dependencies>
+    
+    </project>
+    ```
+
+  - 模块A依赖于模块B
+
+  - ```java
+    <?xml version="1.0" encoding="UTF-8"?>
+    <project xmlns="http://maven.apache.org/POM/4.0.0"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        <modelVersion>4.0.0</modelVersion>
+    
+        <groupId>org.example</groupId>
+        <artifactId>maven_A</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    
+        <properties>
+            <maven.compiler.source>8</maven.compiler.source>
+            <maven.compiler.target>8</maven.compiler.target>
+        </properties>
+    
+        <dependencies>
+            <dependency>
+                <groupId>org.example</groupId>
+                <artifactId>maven_B</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+    
+            <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>5.8.2</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </project>
+    ```
+
+  - 因此在模块A中可以使用druid的相关类(A中自动会引入B中包含的依赖)
+
+  - ![image-20240221215513938](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240221215513938.png)
 
 - ##### 继承
 
