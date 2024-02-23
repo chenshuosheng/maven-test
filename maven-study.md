@@ -591,7 +591,7 @@ public class MvnTest {
       
       
 
-### 五. Maven工程继承和聚合关系
+### 五. Maven工程继承关系
 
   - 概念：Maven继承是指在Maven项目中，让一个项目从另一个项目中继承配置信息的机制，继承可以让我们在多个项目中共享同一配置信息，简化项目的管理和维护工作 。 Maven工程A继承自工程B，A是子工程、B是父工程
 
@@ -772,4 +772,319 @@ maven_son的pom.xml
 ```
 
 ![image-20240222223618765](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240222223618765.png)
+
+
+
+### 六. Maven工程聚合关系
+
+![image-20240222224340274](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20240222224340274.png)
+
+![image-20240222224411682](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240222224411682.png)
+
+
+
+### 七. Maven私服
+
+![image-20240222225104921](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240222225104921.png)
+
+
+
+![image-20240222225156933](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240222225156933.png)
+
+
+
+![image-20240222225441135](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240222225441135.png)
+
+
+
+#### 1. 个人Maven私服
+
+##### 1.1. 下载启动Nexus
+
+nexus下载链接：[Nexus Repository Manager - Software Component Management | Sonatype](https://www.sonatype.com/thanks/repo-oss?submissionGuid=15b2aff0-24c7-4d35-94da-3bac4d671064)
+
+###### 1.1.1. 解压安装包得到：
+
+​	![image-20240223122940009](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223122940009.png)
+
+###### 1.1.2.以管理员身份打开命令行
+
+![image-20240223123238489](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223123238489.png)
+
+
+###### 1.1.3.进入nexus.exe所在目录，执行命令./nexus /run
+
+![image-20240223122416500](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223122416500.png)
+
+启动成功
+
+![image-20240223123648511](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223123648511.png)
+
+
+
+##### 1.2. 访问Nexus首页 http://localhost:8081
+
+![image-20240223124138855](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223124138855.png)
+
+
+
+##### 1.3. 登录
+
+###### 1.3.1. 获取密码
+![image-20240223124411158](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223124411158.png)
+
+
+![image-20240223124459823](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223124459823.png)
+
+
+###### 1.3.2. 登录并修改密码
+![image-20240223124708021](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223124708021.png)
+
+
+###### 1.3.3. 设置是否允许匿名访问
+![image-20240223125023134](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223125023134.png)
+
+登录成功
+
+![image-20240223125305864](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223125305864.png)
+
+
+
+##### 1.4. 配置maven的settings.xml文件
+###### 1.4.1. 拷贝副本，保留原配置 ![image-20240223130312223](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223130312223.png)
+
+
+###### 1.4.2. 配置本地仓库路径![image-20240223130549420](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20240223130549420.png)
+
+
+###### 1.4.3. 配置私服镜像![image-20240223131059631](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223131059631.png)
+
+
+
+若前面设置了禁用匿名访问，则需添加设置（server中id的值应与mirror中的id保持相同）
+
+![image-20240223131556266](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223131556266.png)
+
+
+
+##### 1.5. 使用maven私服下载依赖
+此时打开idea，可以发现maven本地仓库的配置已经自动改变
+
+![image-20240223140819181](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223140819181.png)
+
+
+
+本地仓库目录已自动生成，并已经下载了部分依赖，但是maven依赖管理的相关插件并没有自动下载，需要手动刷新下载
+
+![image-20240223141042210](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223141042210.png)
+
+![image-20240223141203744](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223141203744.png)
+
+![image-20240223141558748](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223141558748.png)
+
+
+
+maven私服Nexus中已经自动从中央仓库下载了相应的依赖
+
+![image-20240223141347821](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223141347821.png)
+
+
+
+手动刷新下载插件依赖后，依赖明显增多
+
+![image-20240223141715454](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223141715454.png)
+
+
+
+对模块进行打包，可以观察到从maven私服下载依赖资源
+
+![image-20240223142439205](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223142439205.png)
+
+
+
+##### 1.6. 上传个人jar包到maven私服
+
+###### 1.6.1. 配置私服相关信息
+
+```java
+<!--http://localhost:8081/repository/maven-snapshots/-->
+<!--部署本jar包到maven私服-->
+<distributionManagement>
+    <snapshotRepository>
+        <id>nexus-mine</id>
+        <name>Nexus Snapshot</name>
+        <url>http://localhost:8081/repository/maven-snapshots/</url>
+    </snapshotRepository>
+</distributionManagement>
+```
+
+
+
+###### 1.6.2. 执行部署deploy
+
+```xml
+"C:\Program Files\Java\jdk1.8.0_111\bin\java.exe" -Dmaven.multiModuleProjectDirectory=F:\programByCSS\maven\maven_test\maven_mvn -Dmaven.home=E:\Maven\apache-maven-3.6.1 -Dclassworlds.conf=E:\Maven\apache-maven-3.6.1\bin\m2.conf "-Dmaven.ext.class.path=E:\Java\IDEA\IntelliJ IDEA 2021.3\plugins\maven\lib\maven-event-listener.jar" "-javaagent:E:\Java\IDEA\IntelliJ IDEA 2021.3\lib\idea_rt.jar=55249:E:\Java\IDEA\IntelliJ IDEA 2021.3\bin" -Dfile.encoding=UTF-8 -classpath E:\Maven\apache-maven-3.6.1\boot\plexus-classworlds-2.6.0.jar org.codehaus.classworlds.Launcher -Didea.version=2021.3 -s E:\Maven\apache-maven-3.6.1\conf\settings.xml deploy
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------------< org.example:maven_mvn >------------------------
+[INFO] Building maven_mvn 1.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ maven_mvn ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 3 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ maven_mvn ---
+[INFO] Changes detected - recompiling the module!
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 1 source file to F:\programByCSS\maven\maven_test\maven_mvn\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ maven_mvn ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory F:\programByCSS\maven\maven_test\maven_mvn\src\test\resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ maven_mvn ---
+[INFO] Changes detected - recompiling the module!
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 1 source file to F:\programByCSS\maven\maven_test\maven_mvn\target\test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ maven_mvn ---
+[INFO] Surefire report directory: F:\programByCSS\maven\maven_test\maven_mvn\target\surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running com.css.MvnTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 sec
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ maven_mvn ---
+[INFO] Building jar: F:\programByCSS\maven\maven_test\maven_mvn\target\maven_mvn-1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- maven-install-plugin:2.4:install (default-install) @ maven_mvn ---
+[INFO] Installing F:\programByCSS\maven\maven_test\maven_mvn\target\maven_mvn-1.0-SNAPSHOT.jar to E:\Maven\apache-maven-3.6.1\mvn_resp(private_server)\org\example\maven_mvn\1.0-SNAPSHOT\maven_mvn-1.0-SNAPSHOT.jar
+[INFO] Installing F:\programByCSS\maven\maven_test\maven_mvn\pom.xml to E:\Maven\apache-maven-3.6.1\mvn_resp(private_server)\org\example\maven_mvn\1.0-SNAPSHOT\maven_mvn-1.0-SNAPSHOT.pom
+[INFO] 
+[INFO] --- maven-deploy-plugin:2.7:deploy (default-deploy) @ maven_mvn ---
+Downloading from nexus-mine: http://localhost:8081/repository/maven-snapshots/org/example/maven_mvn/1.0-SNAPSHOT/maven-metadata.xml
+Uploading to nexus-mine: http://localhost:8081/repository/maven-snapshots/org/example/maven_mvn/1.0-SNAPSHOT/maven_mvn-1.0-20240223.064100-1.jar
+Uploaded to nexus-mine: http://localhost:8081/repository/maven-snapshots/org/example/maven_mvn/1.0-SNAPSHOT/maven_mvn-1.0-20240223.064100-1.jar (4.7 kB at 36 kB/s)
+Uploading to nexus-mine: http://localhost:8081/repository/maven-snapshots/org/example/maven_mvn/1.0-SNAPSHOT/maven_mvn-1.0-20240223.064100-1.pom
+Uploaded to nexus-mine: http://localhost:8081/repository/maven-snapshots/org/example/maven_mvn/1.0-SNAPSHOT/maven_mvn-1.0-20240223.064100-1.pom (1.9 kB at 21 kB/s)
+Downloading from nexus-mine: http://localhost:8081/repository/maven-snapshots/org/example/maven_mvn/maven-metadata.xml
+Uploading to nexus-mine: http://localhost:8081/repository/maven-snapshots/org/example/maven_mvn/1.0-SNAPSHOT/maven-metadata.xml
+Uploaded to nexus-mine: http://localhost:8081/repository/maven-snapshots/org/example/maven_mvn/1.0-SNAPSHOT/maven-metadata.xml (764 B at 8.9 kB/s)
+Uploading to nexus-mine: http://localhost:8081/repository/maven-snapshots/org/example/maven_mvn/maven-metadata.xml
+Uploaded to nexus-mine: http://localhost:8081/repository/maven-snapshots/org/example/maven_mvn/maven-metadata.xml (278 B at 3.2 kB/s)
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.558 s
+[INFO] Finished at: 2024-02-23T14:41:00+08:00
+[INFO] ------------------------------------------------------------------------
+
+Process finished with exit code 0
+```
+
+
+
+###### 1.6.3. 查看maven私服
+
+![image-20240223144336409](https://cdn.jsdelivr.net/gh/chenshuosheng/picture/maven/image-20240223144336409.png)
+
+
+
+##### 1.7. 使用他人的jar包
+
+```java
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>maven_web</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <packaging>war</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.example</groupId>
+            <artifactId>maven_mvn</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>nexus-mine</id>
+            <name>nexus-mine</name>
+            <url>http://localhost:8081/repository/maven-snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+</project>
+```
+
+
+
+打包可以观察到，依赖从http://localhost:8081/repository/maven-snapshots下载
+
+```xml
+"C:\Program Files\Java\jdk1.8.0_111\bin\java.exe" -Dmaven.multiModuleProjectDirectory=F:\programByCSS\maven\maven_test\maven_web -Dmaven.home=E:\Maven\apache-maven-3.6.1 -Dclassworlds.conf=E:\Maven\apache-maven-3.6.1\bin\m2.conf "-Dmaven.ext.class.path=E:\Java\IDEA\IntelliJ IDEA 2021.3\plugins\maven\lib\maven-event-listener.jar" "-javaagent:E:\Java\IDEA\IntelliJ IDEA 2021.3\lib\idea_rt.jar=58652:E:\Java\IDEA\IntelliJ IDEA 2021.3\bin" -Dfile.encoding=UTF-8 -classpath E:\Maven\apache-maven-3.6.1\boot\plexus-classworlds-2.6.0.jar org.codehaus.classworlds.Launcher -Didea.version=2021.3 -s E:\Maven\apache-maven-3.6.1\conf\settings.xml package
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------------< org.example:maven_web >------------------------
+[INFO] Building maven_web 1.0-SNAPSHOT
+[INFO] --------------------------------[ war ]---------------------------------
+Downloading from nexus-mine: http://localhost:8081/repository/maven-snapshots/org/example/maven_mvn/1.0-SNAPSHOT/maven_mvn-1.0-20240223.064100-1.pom
+Downloaded from nexus-mine: http://localhost:8081/repository/maven-snapshots/org/example/maven_mvn/1.0-SNAPSHOT/maven_mvn-1.0-20240223.064100-1.pom (1.9 kB at 11 kB/s)
+Downloading from nexus-mine: http://localhost:8081/repository/maven-snapshots/org/example/maven_mvn/1.0-SNAPSHOT/maven_mvn-1.0-20240223.064100-1.jar
+Downloaded from nexus-mine: http://localhost:8081/repository/maven-snapshots/org/example/maven_mvn/1.0-SNAPSHOT/maven_mvn-1.0-20240223.064100-1.jar (4.7 kB at 196 kB/s)
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ maven_web ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 0 resource
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ maven_web ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ maven_web ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory F:\programByCSS\maven\maven_test\maven_web\src\test\resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ maven_web ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ maven_web ---
+[INFO] No tests to run.
+[INFO] 
+[INFO] --- maven-war-plugin:2.2:war (default-war) @ maven_web ---
+[INFO] Packaging webapp
+[INFO] Assembling webapp [maven_web] in [F:\programByCSS\maven\maven_test\maven_web\target\maven_web-1.0-SNAPSHOT]
+[INFO] Processing war project
+[INFO] Copying webapp resources [F:\programByCSS\maven\maven_test\maven_web\src\main\webapp]
+[INFO] Webapp assembled in [39 msecs]
+[INFO] Building war: F:\programByCSS\maven\maven_test\maven_web\target\maven_web-1.0-SNAPSHOT.war
+[INFO] WEB-INF\web.xml already added, skipping
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.125 s
+[INFO] Finished at: 2024-02-23T15:37:00+08:00
+[INFO] ------------------------------------------------------------------------
+
+Process finished with exit code 0
+```
 
