@@ -43,4 +43,14 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <!--http://localhost:8081/repository/maven-snapshots/-->
+    <!--部署本jar包到maven私服-->
+    <distributionManagement>
+        <snapshotRepository>
+            <id>nexus-mine</id>
+            <name>Nexus Snapshot</name>
+            <url>http://localhost:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
